@@ -56,16 +56,18 @@ def findAllFile(base):
 
 if __name__ == "__main__":
     DEFAULT_OUTPUT_FOLDER, DEFAULT_OUTPUT_FORMAT = loadConfig()
-    # if output folder already exists, break
-    if path.exists('.' + os.sep + DEFAULT_OUTPUT_FOLDER):
-        print("Output folder detected, terminating!")
-        exit()
 
-    base = '.'
-    for this_pwr, this_file in findAllFile(base):
+    BASE = '.'
+    IGNORE = '.'+os.sep+DEFAULT_OUTPUT_FOLDER
+    IGNORE_LEN = len(IGNORE)
+
+    for this_pwr, this_file in findAllFile(BASE):
+        if len(this_pwr) >= IGNORE_LEN and this_pwr[:IGNORE_LEN] == IGNORE:
+            print("Skipping Converted images")
+            continue
         # New file path according to the settings
         converted_path = '.' + os.sep + DEFAULT_OUTPUT_FOLDER + \
-            this_file[1:this_file.rfind('.')] + '.' + DEFAULT_OUTPUT_FORMAT 
+            this_file[1:this_file.rfind('.')] + '.' + DEFAULT_OUTPUT_FORMAT
         converted_pwr = '.' + os.sep + DEFAULT_OUTPUT_FOLDER + this_pwr[1:]
         print(converted_path)
         # If already exist, skip
@@ -73,7 +75,7 @@ if __name__ == "__main__":
             continue
         # Open - Convert - Close
         try:
-            print(converted_pwr)
+            # print(converted_pwr)
             if not path.exists(converted_pwr):
                 os.makedirs(converted_pwr)
             im = Image.open(this_file).convert("RGB")
